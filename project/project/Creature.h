@@ -16,6 +16,6 @@ public:
 	void CreateRandom();
 	void CheckOverlap(Node& node, int overlapDistance);
 	void Mutate();
-	Vec2 AverageDistance();
+	Vec2 AveragePosition();
 };
 
