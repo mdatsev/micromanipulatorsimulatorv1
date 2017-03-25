@@ -18,6 +18,15 @@ void Creature::AddNode(Node n)
 {
 	nodes.push_back(n);
 }
+void Creature::RemoveNode(int index)
+{
+	nodes.erase(nodes.begin() + index);
+	for (Muscle& m : muscles)
+	{
+		if (m.node1_ID > index) m.node1_ID--;
+		if (m.node2_ID > index) m.node2_ID--;
+	}
+}
 
 void Creature::AddMuscle(Muscle m)
 {
@@ -58,32 +67,49 @@ void Creature::CreateRandom()
 		distD = std::uniform_real_distribution<double>(min_mass, max_mass);
 		mass = distD(gen);
 		AddNode(Node(Vec2(nodeX, nodeY), size, friction, restitution, mass, true));
-		for (int j = 0; j < number_of_muscles; j++)
-		{
-			distI = std::uniform_int_distribution<int>(0, number_of_muscles);
-			nodeId1 = distI(gen);
-			nodeId2 = distI(gen);
-			if (nodeId1 == nodeId2)
-			{
-				continue;
-			}
-			for (Muscle& m : muscles)
-			{
-				if ((nodeId1 == m.node1_ID && nodeId2 == m.node2_ID)
-					|| (nodeId1 == m.node2_ID && nodeId2 == m.node1_ID))
-				{
-					break;
-					//todo na tam po kusno da triq node
-				}
-			}
-			distD = std::uniform_real_distribution<double>(min_stiffnes, max_stiffness);
-			stiffness = distD(gen);
-			distD = std::uniform_real_distribution<double>(min_targetL, max_targetL);
-			target_length = distD(gen);
-			Muscle m = Muscle(nodeId1, nodeId2, stiffness, target_length);
-		}
 	}
-
+	for (Node& n : nodes)
+	{
+		CheckOverlap(n, overlapDistance);
+	}
+	for (int j = 0; j < number_of_muscles; j++)
+	{
+		bool isValid = true;
+		distI = std::uniform_int_distribution<int>(0, number_of_nodes);
+		nodeId1 = distI(gen);
+		nodeId2 = distI(gen);
+		if (nodeId1 == nodeId2)
+		{
+			continue;
+		}
+		for (Muscle& m : muscles)
+		{
+			if ((nodeId1 == m.node1_ID && nodeId2 == m.node2_ID)
+				|| (nodeId1 == m.node2_ID && nodeId2 == m.node1_ID))
+			{
+				isValid = false;
+				//todo na tam po kusno da triq node
+			}
+		}
+		if (!isValid) continue;
+		distD = std::uniform_real_distribution<double>(min_stiffnes, max_stiffness);
+		stiffness = distD(gen);
+		distD = std::uniform_real_distribution<double>(min_targetL, max_targetL);
+		target_length = distD(gen);
+		Muscle m = Muscle(nodeId1, nodeId2, stiffness, target_length);
+	}
+	for (int i = 0; i < number_of_nodes; i++)
+	{
+		bool isValid = false;
+		for (Muscle& m : muscles)
+		{
+			if (i == m.node1_ID || i == m.node2_ID)
+			{
+				isValid = true;
+			}
+		}
+		if (!isValid) RemoveNode(i);
+	}
 	
 }
 
@@ -100,7 +126,8 @@ void Creature::CheckOverlap(Node& node, int overlapDistance)
 			|| top > node.pos.y + overlapDistance
 			|| bottom < node.pos.y - overlapDistance)
 		{
-			
+			node.pos.x += 1;
+			node.pos.y += 1;
 		}
 	}
 }

@@ -12,6 +12,7 @@ public:
 	~Creature();
 	void AddNode(Node);
 	void AddMuscle(Muscle);
+	void RemoveNode(int index);
 	void CreateRandom();
 	void CheckOverlap(Node& node, int overlapDistance);
 	Vec2 AverageDistance();
