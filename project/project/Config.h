@@ -2,7 +2,8 @@
 #include <random>
 #define seed 2
 static std::mt19937 gen(seed);
-#define gravity_constant  200.1
+#define gravity_constant 1000
+#define air_friction 0.4
 #define generation_size 100
 #define delta_time 0.001
 //generator parameters
@@ -15,11 +16,11 @@ static std::mt19937 gen(seed);
 #define max_friction 1
 #define min_restitution  0
 #define max_restitution 0
-#define min_mass 10
-#define max_mass 100
+#define min_mass 1
+#define max_mass 1
 #define min_muscles 1
-#define max_muscles 5
-#define min_stiffnes 200
+#define max_muscles 10
+#define min_stiffness 200
 #define max_stiffness 600
 #define min_targetL 100
 #define max_targetL 300
