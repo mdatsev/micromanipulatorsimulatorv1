@@ -2,7 +2,8 @@
 #include <random>
 #define seed 24424232
 static std::mt19937 gen(seed);
-#define generation_size 1000
+#define gravity_constant  200.1
+#define generation_size 50
 #define delta_time 0.001
 //creature parameters
 #define max_dimension 200
@@ -22,3 +23,9 @@ static std::mt19937 gen(seed);
 #define max_stiffness 600
 #define min_targetL 100
 #define max_targetL 300
+#define min_cycles 2
+#define max_cycles 5
+#define min_length_multiplier 0.1
+#define max_length_multiplier 1
+#define min_phase_time 0.5
+#define max_phase_time 2.5

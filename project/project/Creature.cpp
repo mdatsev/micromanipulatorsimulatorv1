@@ -47,8 +47,8 @@ void Creature::CreateRandom()
 	distI = std::uniform_int_distribution<int>(min_muscles, max_muscles);
 	int number_of_muscles = distI(gen);
 	int nodeX, nodeY;
-	float size, friction, restitution, mass;
-	float target_length, stiffness;
+	double size, friction, restitution, mass;
+	double target_length, stiffness;
 
 	int nodeId1, nodeId2;
 
@@ -110,9 +110,23 @@ void Creature::CreateRandom()
 		}
 		if (!isValid) 
 		{
-			//RemoveNode(i);
-			//i--;
+			RemoveNode(i);
+			i--;
 		}	
+	}
+	distI = std::uniform_int_distribution<int>(min_cycles, max_cycles);
+	int number_of_cycles = distI(gen);
+	for (Muscle& m : muscles)
+	{
+		for (int i = 0; i < number_of_cycles; i++)
+		{
+			distD = std::uniform_real_distribution<double>(min_length_multiplier, max_length_multiplier);
+			double length_multiplier = distD(gen);
+			distD = std::uniform_real_distribution<double>(min_phase_time, max_phase_time);
+			double phase_time = distD(gen);
+			m.length_cycle.push_back(LengthTimePair(length_multiplier, phase_time));
+		}
+		
 	}
 	
 }

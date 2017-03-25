@@ -136,7 +136,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    generation.MeasureFitness();
 #endif
 
-   SetTimer(hWnd, 1, 1000, NULL);
+   SetTimer(hWnd, 1, 1000/60, NULL);
 
    return TRUE;
 }
