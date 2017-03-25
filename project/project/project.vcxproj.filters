@@ -48,9 +48,6 @@
     <ClInclude Include="Muscle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LengthTimePair.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Node.h"
 #include "World.h"
-#include "constants.h"
+#include "Config.h"
 #include <ctime>
 
 Node::Node(Vec2 pos, double size, double friction, double restitution, double mass, bool gravity) :

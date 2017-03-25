@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "World.h"
 #include <process.h>
-#include "constants.h"
 #include "Config.h"
 
 World::World()

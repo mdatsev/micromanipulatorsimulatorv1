@@ -146,7 +146,6 @@
     <ClInclude Include="Generation.h" />
     <ClInclude Include="LengthTimePair.h" />
     <ClInclude Include="Ground.h" />
-    <ClInclude Include="constants.h" />
     <ClInclude Include="Muscle.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="project.h" />
