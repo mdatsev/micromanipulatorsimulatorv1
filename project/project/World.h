@@ -12,7 +12,7 @@ public:
 	double flat_ground_y;
 	World();
 	~World();
-	void StartSimulation();
+	void StartSimulation(double time);
 	void StopSimulation();
 	void AddCreature(Creature);
 	void Clear();

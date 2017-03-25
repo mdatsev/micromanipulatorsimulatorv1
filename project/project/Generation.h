@@ -9,6 +9,7 @@ public:
 	World world;
 	void GenerateRandom();
 	void MeasureFitness();
+	void KillAndBreed();
 	Generation(int size);
 	~Generation();
 };

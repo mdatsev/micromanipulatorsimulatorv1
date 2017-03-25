@@ -6,6 +6,7 @@
 class Creature
 {
 public:
+	double fitness;
 	std::vector<Node> nodes;
 	std::vector<Muscle> muscles;
 	Creature();
