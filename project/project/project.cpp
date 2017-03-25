@@ -127,7 +127,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    Muscle m = Muscle(0, 1, 500, 300);
    Muscle m2 = Muscle(0, 2, 500, 300);
    Muscle m3 = Muscle(1, 2, 500, 200);
-   m.length_cycle.push_back(LengthTimePair(1, 2));
+   m.length_cycle.push_back(LengthTimePair(1, 2));//lengthM , pairTime, cycle_size
    m.length_cycle.push_back(LengthTimePair(0.95, 2));
    m2.length_cycle.push_back(LengthTimePair(1, 2));
    m3.length_cycle.push_back(LengthTimePair(1, 2));

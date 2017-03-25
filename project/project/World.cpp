@@ -37,6 +37,11 @@ void World::AddCreature(Creature n)
 	creatures.push_back(n);
 }
 
+void World::Clear()
+{
+	creatures.clear();
+}
+
 void World::Draw(HDC hdc, RECT rect, bool debug)
 {
 	HDC hMemDc = CreateCompatibleDC(hdc);

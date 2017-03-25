@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Creature.h"
 #include <random>
+#include "Config.h"
 
 
 
@@ -23,34 +24,64 @@ void Creature::AddMuscle(Muscle m)
 	muscles.push_back(m);
 }
 
-void Creature::CreateRandom(int min_nodes, int max_nodes, int min_size, int max_size, int min_friction, int max_friction, int min_restitution, int max_restitution , int min_mass, int max_mass, double max_dimension, int min_muscles, int max_muscles)
+void Creature::CreateRandom()
 {
-	int seed = 24424234;
 	int overlapDistance = 5;
 	nodes.clear();
 	muscles.clear();
 	std::mt19937 gen(seed);
-	std::uniform_int_distribution<int> dist(min_nodes, max_nodes);
+	std::uniform_int_distribution<int> distI(min_nodes, max_nodes);
+	std::uniform_real_distribution<double> distD(0, 1);
 
 	//todo
-	int number_of_nodes = dist(gen);
-	int nodeX, nodeY, size, friction, restitution, mass;
+	int number_of_nodes = distI(gen);
+
+	distI = std::uniform_int_distribution<int>(min_muscles, max_muscles);
+	int number_of_muscles = distI(gen);
+	int nodeX, nodeY;
+	float size, friction, restitution, mass;
+	float target_length, stiffness;
+
+	int nodeId1, nodeId2;
 
 	for (int i = 0; i < number_of_nodes; i++)
 	{
-		dist = std::uniform_int_distribution<int>(0, max_dimension);
-		nodeX = dist(gen);
-		nodeY = dist(gen);
-		dist = std::uniform_int_distribution<int>(min_size, max_size);
-		size = dist(gen);
-		dist = std::uniform_int_distribution<int>(min_friction, max_friction);
-		friction = dist(gen);
-		dist = std::uniform_int_distribution<int>(min_restitution, max_friction);
-		restitution = dist(gen);
-		dist = std::uniform_int_distribution<int>(min_mass, max_mass);
-		mass = dist(gen);
-
+		distI = std::uniform_int_distribution<int>(0, max_dimension);
+		nodeX = distI(gen);
+		nodeY = distI(gen);
+		distD = std::uniform_real_distribution<double>(min_size, max_size);
+		size = distD(gen);
+		distD = std::uniform_real_distribution<double>(min_friction, max_friction);
+		friction = distD(gen);
+		distD = std::uniform_real_distribution<double>(min_restitution, max_friction);
+		restitution = distD(gen);
+		distD = std::uniform_real_distribution<double>(min_mass, max_mass);
+		mass = distD(gen);
 		AddNode(Node(Vec2(nodeX, nodeY), size, friction, restitution, mass, true));
+		for (int j = 0; j < number_of_muscles; j++)
+		{
+			distI = std::uniform_int_distribution<int>(0, number_of_muscles);
+			nodeId1 = distI(gen);
+			nodeId2 = distI(gen);
+			if (nodeId1 == nodeId2)
+			{
+				continue;
+			}
+			for (Muscle& m : muscles)
+			{
+				if ((nodeId1 == m.node1_ID && nodeId2 == m.node2_ID)
+					|| (nodeId1 == m.node2_ID && nodeId2 == m.node1_ID))
+				{
+					break;
+					//todo na tam po kusno da triq node
+				}
+			}
+			distD = std::uniform_real_distribution<double>(min_stiffnes, max_stiffness);
+			stiffness = distD(gen);
+			distD = std::uniform_real_distribution<double>(min_targetL, max_targetL);
+			target_length = distD(gen);
+			Muscle m = Muscle(nodeId1, nodeId2, stiffness, target_length);
+		}
 	}
 
 	

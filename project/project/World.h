@@ -14,6 +14,7 @@ public:
 	void StartSimulation();
 	void StopSimulation();
 	void AddCreature(Creature);
+	void Clear();
 	void Draw(HDC, RECT, bool = false);
 	void Integrate(double dt);
 };

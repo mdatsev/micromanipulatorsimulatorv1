@@ -2,9 +2,22 @@
 #include "Generation.h"
 
 
-void Generation::GenerateRandom(int min_nodes, int max_nodes, int min_size, int max_size, int min_friction, int max_friction, int min_restitution, int max_restitution, int min_mass, int max_mass, double max_dimension, int min_muscles, int max_muscles)
+void Generation::GenerateRandom()
 {
+	for (int i = 0; i < size; i++)
+	{
+		Creature c;
+//		c.CreateRandom;
+		creatures.push_back(c);
+	}
+}
 
+void Generation::MeasureFitness()
+{
+	for (Creature& c : creatures)
+	{
+		world.AddCreature(c);
+	}
 }
 
 Generation::Generation(int size) : size(size)
