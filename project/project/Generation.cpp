@@ -27,7 +27,7 @@ void Generation::MeasureFitness()
 		world.AddCreature(c);
 
 	}
-	HANDLE hThread = world.StartSimulation(15);
+	HANDLE hThread = world.StartSimulation(1500);
 	WaitForSingleObject(world.hThread, INFINITE);
 	for (Creature& c : creatures)
 	{

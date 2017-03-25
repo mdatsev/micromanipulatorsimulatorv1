@@ -12,7 +12,6 @@ public:
 	Vec2 gravityForce;
 	double size;
 	double friction;
-	double airFriction = 0.3;
 	double mass;
 	double restitution;
 	Vec2 pos;

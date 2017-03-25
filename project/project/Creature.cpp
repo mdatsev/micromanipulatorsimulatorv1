@@ -46,7 +46,7 @@ void Creature::CreateRandom()
 
 	distI = std::uniform_int_distribution<int>(min_muscles, max_muscles);
 	int number_of_muscles = distI(gen);
-	int nodeX, nodeY;
+	double nodeX, nodeY;
 	double size, friction, restitution, mass;
 	double target_length, stiffness;
 
@@ -54,11 +54,11 @@ void Creature::CreateRandom()
 
 	for (int i = 0; i < number_of_nodes; i++)
 	{
-		distI = std::uniform_int_distribution<int>(0, max_dimension);
-		nodeX = distI(gen);
-		nodeY = distI(gen);
 		distD = std::uniform_real_distribution<double>(min_size, max_size);
 		size = distD(gen);
+		distD = std::uniform_real_distribution<double>(0, max_dimension - size);
+		nodeX = distD(gen);
+		nodeY = distD(gen);
 		distD = std::uniform_real_distribution<double>(min_friction, max_friction);
 		friction = distD(gen);
 		distD = std::uniform_real_distribution<double>(min_restitution, max_friction);
@@ -98,7 +98,7 @@ void Creature::CreateRandom()
 			}
 		}
 		if (!isValid) continue;
-		distD = std::uniform_real_distribution<double>(min_stiffnes, max_stiffness);
+		distD = std::uniform_real_distribution<double>(min_stiffness, max_stiffness);
 		stiffness = distD(gen);
 		distD = std::uniform_real_distribution<double>(min_targetL, max_targetL);
 		target_length = distD(gen);
@@ -154,7 +154,7 @@ void Creature::Mutate()
 				number_of_nodes = distI(gen);
 				for (int i = 0; i < number_of_nodes - 1; i++)
 				{
-					distD = std::uniform_real_distribution<double>(min_stiffnes, max_stiffness);
+					distD = std::uniform_real_distribution<double>(min_stiffness, max_stiffness);
 					double stiffness = distD(gen);
 					distD = std::uniform_real_distribution<double>(min_targetL, max_targetL);
 					double target_length = distD(gen);
@@ -178,7 +178,7 @@ void Creature::Mutate()
 					}
 					if (isValid)
 					{
-						distD = std::uniform_real_distribution<double>(min_stiffnes, max_stiffness);
+						distD = std::uniform_real_distribution<double>(min_stiffness, max_stiffness);
 						double stiffness = distD(gen);
 						distD = std::uniform_real_distribution<double>(min_targetL, max_targetL);
 						double target_length = distD(gen);

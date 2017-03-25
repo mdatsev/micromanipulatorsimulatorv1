@@ -222,7 +222,7 @@ void World::Integrate(double dt)
 		{
 			n.CollideWithGround(ground, dt);
 			//n.CollideFlat(500);
-			n.forces -= n.vel * n.size * n.airFriction;
+			n.forces -= n.vel * n.size * air_friction;
 			n.acc = n.forces / n.mass;
 			n.vel += n.acc * dt;
 			n.pos += n.vel * dt;
