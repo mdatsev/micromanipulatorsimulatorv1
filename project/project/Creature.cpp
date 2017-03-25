@@ -131,6 +131,21 @@ void Creature::CreateRandom()
 	
 }
 
+void Creature::Mutate()
+{
+	std::uniform_int_distribution<int> distI(min_nodes, max_nodes);
+	std::uniform_real_distribution<double> distD(0, 1);
+	double chance = distD(gen);
+	if (chance < mutation_chance)
+	{
+		int number_of_nodes = distI(gen);
+		for (int i = 0; i < number_of_nodes; i++)
+		{
+
+		}
+	}
+}
+
 void Creature::CheckOverlap(Node& node, int overlapDistance)
 {
 	for (Node& n : nodes)

@@ -5,7 +5,7 @@ static std::mt19937 gen(seed);
 #define gravity_constant  200.1
 #define generation_size 50
 #define delta_time 0.001
-//creature parameters
+//generator parameters
 #define max_dimension 200
 #define min_nodes 2
 #define max_nodes 5 
@@ -13,8 +13,8 @@ static std::mt19937 gen(seed);
 #define max_size 25
 #define min_friction 0
 #define max_friction 1
-#define min_restitution  1
-#define max_restitution 1
+#define min_restitution  0
+#define max_restitution 0
 #define min_mass 10
 #define max_mass 100
 #define min_muscles 1
@@ -29,3 +29,7 @@ static std::mt19937 gen(seed);
 #define max_length_multiplier 1
 #define min_phase_time 0.5
 #define max_phase_time 2.5
+//mutation parameters
+#define mutation_chance 0.01
+#define large_mutation_chance 0.005
+
