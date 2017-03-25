@@ -116,8 +116,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    UpdateWindow(hWnd);
    Ground* g = new Ground(10,10);
 #if 1
-   g->AddPoint(Vec2(-1000, 300));
-   g->AddPoint(Vec2(2000, 300));
+   g->AddPoint(Vec2(-100000, 300));
+   g->AddPoint(Vec2(2000000, 300));
 #else
    g->AddPoint(Vec2(0, 200));
    g->AddPoint(Vec2(300 , 400));
@@ -132,6 +132,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 #ifdef THREAD
    generation.GenerateRandom();
    generation.MeasureFitness();
+   generation.KillAndBreed();
 #endif
 
    SetTimer(hWnd, 1, 1000/60, NULL);
@@ -188,9 +189,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			double precision = 1000;
 			for (int i = 0; i < precision; i++)
 			{
-				world.Integrate(1/precision/60);
+				generation.world.Integrate(1/precision/60);
 			}
-            EndPaint(hWnd, &ps);
 #endif
 			int fastest = 0;
 			for (int i = 1; i < generation.world.creatures.size(); i++)
@@ -204,6 +204,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				generation.world.creatures.size() ?
 				generation.world.creatures[fastest].AveragePosition() :
 				Vec2(0,0), true);
+			EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:

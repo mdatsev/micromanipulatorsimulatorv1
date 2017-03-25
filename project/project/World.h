@@ -5,6 +5,7 @@
 class World
 {
 public:
+	HANDLE hThread;
 	std::vector<Creature> creatures;
 	double time_running = 0;
 	bool simulation_running;
@@ -12,7 +13,7 @@ public:
 	double flat_ground_y;
 	World();
 	~World();
-	void StartSimulation(double time);
+	HANDLE StartSimulation(double time);
 	void StopSimulation();
 	void AddCreature(Creature);
 	void Clear();

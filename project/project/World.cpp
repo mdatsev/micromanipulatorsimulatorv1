@@ -31,12 +31,12 @@ void Simulate(void* param)
 	}
 }
 
-void World::StartSimulation(double time)
+HANDLE World::StartSimulation(double time)
 {
 	struct simulateParams* params = new simulateParams();
 	params->world = this;
 	params->time = time;
-	_beginthread(Simulate, 0, (void *)params);
+	return (HANDLE)_beginthread(Simulate, 0, (void *)params);
 }
 
 void World::StopSimulation()
@@ -74,6 +74,14 @@ void World::Draw(HDC hdc, RECT rect, double scale, Vec2 center, bool debug)
 	HPEN cyanPen = CreatePen(PS_SOLID, 1, RGB(0, 255, 255));
 	HBRUSH solidBrush = CreateSolidBrush(RGB(255, 0, 0));
 	HPEN hOldPen = (HPEN)SelectObject(hMemDc, hBrush);
+
+	TCHAR buffer[80];
+	SetTextColor(hMemDc, RGB(0, 0, 255));
+	SetBkMode(hMemDc, TRANSPARENT);
+	_stprintf_s(buffer, _T("time:%f"), time_running);
+	TextOut(hMemDc, 0, 0, buffer, _tcslen(buffer));
+
+
 	for(Creature& c : creatures)
 	{
 		MoveToEx(hMemDc, World::ground->points[0].x * scale + xoff, World::ground->points[0].y * scale + yoff, NULL); //fixme drawing the same point twice
@@ -219,6 +227,6 @@ void World::Integrate(double dt)
 			n.vel += n.acc * dt;
 			n.pos += n.vel * dt;
 		}
-		time_running += dt;
 	}
+	time_running += dt;
 }
