@@ -18,7 +18,13 @@ void Generation::MeasureFitness()
 	{
 		world.AddCreature(c);
 	}
-	world.StartSimulation();
+	world.StartSimulation(15);
+	
+}
+
+void Generation::KillAndBreed()
+{
+	
 }
 
 Generation::Generation(int size) : size(size)

@@ -12,19 +12,31 @@ World::~World()
 {
 }
 
+typedef struct simulateParams
+{
+	World* world;
+	double time;
+}simulateParams;
+
 void Simulate(void* param)
 {
-	World* world = (World*)param;
+
+	simulateParams* params = (simulateParams*)param;
+	World* world = params->world;
+	double time = params->time;
 	world->simulation_running = true;
-	while (world->simulation_running)
+	while (world->simulation_running && world->time_running < time)
 	{
 		world->Integrate(delta_time);
 	}
 }
 
-void World::StartSimulation()
+void World::StartSimulation(double time)
 {
-	_beginthread(Simulate, 0, this);
+	struct simulateParams* params = new simulateParams();
+	params->world = this;
+	params->time = time;
+	_beginthread(Simulate, 0, (void *)params);
 }
 
 void World::StopSimulation()
@@ -45,10 +57,12 @@ void World::Clear()
 void World::Draw(HDC hdc, RECT rect, double scale, Vec2 center, bool debug)
 {
 	Vec2 top_left_point = Vec2(
-		center.x - (rect.right * scale - rect.left * scale) / 2,
-		center.y - (rect.bottom * scale - rect.top * scale) / 2);
+		scale * center.x - (rect.right - rect.left) / 2,
+		scale * center.y - (rect.bottom - rect.top) / 2
+	);
 	double xoff = -top_left_point.x;
 	double yoff = -top_left_point.y;
+	
 	HDC hMemDc = CreateCompatibleDC(hdc);
 	HBITMAP hBmp = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
 	SelectObject(hMemDc, hBmp);

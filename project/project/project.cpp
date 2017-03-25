@@ -14,8 +14,6 @@
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
-int deltaTime;
-int oldTime;
 
 Generation generation = Generation(generation_size);
 
@@ -202,7 +200,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					fastest = i;
 				}
 			}
-			generation.world.Draw(hdc, rc, 1, generation.world.creatures.size() ? generation.world.creatures[fastest].AveragePosition() : Vec2(0,0), true);
+			generation.world.Draw(hdc, rc, 1,
+				generation.world.creatures.size() ?
+				generation.world.creatures[fastest].AveragePosition() :
+				Vec2(0,0), true);
         }
         break;
     case WM_DESTROY:
