@@ -188,9 +188,9 @@ void Creature::Mutate()
 		chance = distD(gen);
 		if (chance < mutation_chance)
 		{
-			double targetL_deviation = muscles[i].target_length / max_deviation;
-			distD = std::uniform_real_distribution<double>(muscles[i].target_length - targetL_deviation, muscles[i].target_length + targetL_deviation);
-			muscles[i].target_length = distD(gen);
+			double targetL_deviation = muscles[i].rest_target_length/ max_deviation;
+			distD = std::uniform_real_distribution<double>(muscles[i].rest_target_length - targetL_deviation, muscles[i].rest_target_length + targetL_deviation);
+			muscles[i].rest_target_length = distD(gen);
 		}
 	}
 }
