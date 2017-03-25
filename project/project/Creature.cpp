@@ -75,8 +75,15 @@ void Creature::CreateRandom()
 	{
 		bool isValid = true;
 		distI = std::uniform_int_distribution<int>(0, number_of_nodes - 1);
-		nodeId1 = distI(gen);
-		nodeId2 = distI(gen);
+		if (number_of_nodes == 2)
+		{
+			nodeId1 = 0;
+			nodeId2 = 1;
+		}
+		else {
+			nodeId1 = distI(gen);
+			nodeId2 = distI(gen);
+		}
 		if (nodeId1 == nodeId2)
 		{
 			continue;
@@ -98,22 +105,7 @@ void Creature::CreateRandom()
 		AddMuscle(Muscle(nodeId1, nodeId2, stiffness, target_length));
 
 	}
-	for (int i = 0; i < nodes.size(); i++)
-	{
-		bool isValid = false;
-		for (Muscle& m : muscles)
-		{
-			if (i == m.node1_ID || i == m.node2_ID)
-			{
-				isValid = true;
-			}
-		}
-		if (!isValid) 
-		{
-			RemoveNode(i);
-			i--;
-		}	
-	}
+	RemoveALoneNode();
 	distI = std::uniform_int_distribution<int>(min_cycles, max_cycles);
 	int number_of_cycles = distI(gen);
 	for (Muscle& m : muscles)
@@ -133,13 +125,92 @@ void Creature::CreateRandom()
 
 void Creature::Mutate()
 {
-
-	std::uniform_int_distribution<int> distI(min_nodes, max_nodes);
-	int number_of_nodes = distI(gen);
+	std::uniform_int_distribution<int> distI(0, 1);
+	std::uniform_real_distribution<double> distD(0, 1);
+	double chance = distD(gen);
+	int number_of_nodes;
+	int number_of_muscles;
+	if (chance < large_mutation_chance)
+	{
+		int add_or_delete = distI(gen);  // add 1. remove 0
+		int node_or_muscle = distI(gen); // node 1. muscle 0
+		if (add_or_delete)
+		{
+			if (node_or_muscle) 
+			{
+				distI = std::uniform_int_distribution<int>(0, max_dimension);
+				int nodeX = distI(gen);
+				int nodeY = distI(gen);
+				distD = std::uniform_real_distribution<double>(min_size, max_size);
+				double size = distD(gen);
+				distD = std::uniform_real_distribution<double>(min_friction, max_friction);
+				double friction = distD(gen);
+				distD = std::uniform_real_distribution<double>(min_restitution, max_friction);
+				double restitution = distD(gen);
+				distD = std::uniform_real_distribution<double>(min_mass, max_mass);
+				double mass = distD(gen);
+				AddNode(Node(Vec2(nodeX, nodeY), size, friction, restitution, mass, true));
+				distI = std::uniform_int_distribution<int>(1, nodes.size() - 1);
+				number_of_nodes = distI(gen);
+				for (int i = 0; i < number_of_nodes - 1; i++)
+				{
+					distD = std::uniform_real_distribution<double>(min_stiffnes, max_stiffness);
+					double stiffness = distD(gen);
+					distD = std::uniform_real_distribution<double>(min_targetL, max_targetL);
+					double target_length = distD(gen);
+					AddMuscle(Muscle(nodes.size() - 1, i, stiffness, target_length));
+				}
+			}
+			else {
+				bool isValid = true;
+				distI = std::uniform_int_distribution<int>(0, nodes.size() - 1);
+				int nodeId1 = distI(gen);
+				int nodeId2 = distI(gen);
+				if (nodeId1 != nodeId2)
+				{
+					for (Muscle& m : muscles)
+					{
+						if ((nodeId1 == m.node1_ID && nodeId2 == m.node2_ID)
+							|| (nodeId1 == m.node2_ID && nodeId2 == m.node1_ID))
+						{
+							isValid = false;
+						}
+					}
+					if (isValid)
+					{
+						distD = std::uniform_real_distribution<double>(min_stiffnes, max_stiffness);
+						double stiffness = distD(gen);
+						distD = std::uniform_real_distribution<double>(min_targetL, max_targetL);
+						double target_length = distD(gen);
+						AddMuscle(Muscle(nodeId1, nodeId2, stiffness, target_length));
+					}
+				}
+				
+			}
+			
+		}
+		else {
+			distI = std::uniform_int_distribution<int>(0, nodes.size());
+			int i = distI(gen);
+			RemoveNode(i);
+			int j = 0;
+			for (Muscle& m : muscles)
+			{
+				if (m.node1_ID == i || m.node2_ID == i)
+				{
+					muscles.erase(muscles.begin() + j);
+				}
+				j++;
+			}
+			RemoveALoneNode();
+		}
+	}
+	distI = std::uniform_int_distribution<int>(1, nodes.size());
+	number_of_nodes = distI(gen);
 	for (int i = 0; i < number_of_nodes; i++)
 	{
-		std::uniform_real_distribution<double> distD(0, 1);
-		double chance = distD(gen);
+		distD = std::uniform_real_distribution<double>(0, 1);
+		chance = distD(gen);
 		if (chance < mutation_chance)
 		{
 			double size_deviation = nodes[i].size / max_deviation;
@@ -173,24 +244,44 @@ void Creature::Mutate()
 		}
 	}
 	distI = std::uniform_int_distribution<int>(min_nodes, max_nodes);
-	int number_of_muscles = distI(gen);
+	number_of_muscles = distI(gen);
 	for (int i = 0; i < number_of_muscles; i++)
 	{
-		std::uniform_real_distribution<double> distD(0, 1);
-		double chance = distD(gen);
+		distD = std::uniform_real_distribution<double>(0, 1);
+		chance = distD(gen);
 		if (chance < mutation_chance)
 		{
-			double stiffness_deviation = muscles[i].stiffness / max_deviation;
-			distD = std::uniform_real_distribution<double>(muscles[i].stiffness - stiffness_deviation, muscles[i].stiffness + stiffness_deviation);
-			muscles[i].stiffness = distD(gen);
+			//double stiffness_deviation = muscles[i].stiffness / max_deviation;
+			//distD = std::uniform_real_distribution<double>(muscles[i].stiffness - stiffness_deviation, muscles[i].stiffness + stiffness_deviation);
+			//muscles[i].stiffness = distD(gen);
 		}
 		distD = std::uniform_real_distribution<double>(0, 1);
 		chance = distD(gen);
 		if (chance < mutation_chance)
 		{
-			double targetL_deviation = muscles[i].rest_target_length/ max_deviation;
-			distD = std::uniform_real_distribution<double>(muscles[i].rest_target_length - targetL_deviation, muscles[i].rest_target_length + targetL_deviation);
-			muscles[i].rest_target_length = distD(gen);
+			//double targetL_deviation = muscles[i].rest_target_length/ max_deviation;
+			//distD = std::uniform_real_distribution<double>(muscles[i].rest_target_length - targetL_deviation, muscles[i].rest_target_length + targetL_deviation);
+			//muscles[i].rest_target_length = distD(gen);
+		}
+	}
+}
+
+void Creature::RemoveALoneNode()
+{
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		bool isValid = false;
+		for (Muscle& m : muscles)
+		{
+			if (i == m.node1_ID || i == m.node2_ID)
+			{
+				isValid = true;
+			}
+		}
+		if (!isValid)
+		{
+			RemoveNode(i);
+			i--;
 		}
 	}
 }
