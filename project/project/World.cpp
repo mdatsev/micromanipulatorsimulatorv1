@@ -18,7 +18,7 @@ void Simulate(void* param)
 	world->simulation_running = true;
 	while (world->simulation_running)
 	{
-		world->Integrate(0.001);
+		world->Integrate(world->delta_time);
 	}
 }
 
@@ -49,7 +49,11 @@ void World::Draw(HDC hdc, RECT rect, bool debug)
 	SelectObject(hMemDc, hBmp);
 	HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255));
 	FillRect(hMemDc, &rect, hBrush);
-
+	HPEN redPen = CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+	HPEN greenPen = CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
+	HPEN bluePen = CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
+	HPEN cyanPen = CreatePen(PS_SOLID, 1, RGB(0, 255, 255));
+	HBRUSH solidBrush = CreateSolidBrush(RGB(255, 0, 0));
 	for(Creature& c : creatures)
 	{
 		MoveToEx(hMemDc, World::ground->points[0].x, World::ground->points[0].y, NULL); //fixme drawing the same point twice
@@ -85,10 +89,6 @@ void World::Draw(HDC hdc, RECT rect, bool debug)
 		{
 			for (Node& n : c.nodes)
 			{
-				HPEN redPen = CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
-				HPEN greenPen = CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
-				HPEN bluePen = CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
-				HPEN cyanPen = CreatePen(PS_SOLID, 1, RGB(0, 255, 255));
 
 				HPEN hOldPen = (HPEN)SelectObject(hMemDc, greenPen);
 				//draw velocity			
@@ -110,25 +110,27 @@ void World::Draw(HDC hdc, RECT rect, bool debug)
 				MoveToEx(hMemDc, n.pos.x, n.pos.y, NULL);
 				LineTo(hMemDc, n.pos.x + n.forces.x * 60, n.pos.y + n.forces.y * 60);
 
-				//SelectObject(hMemDc, cyanPen);
-				//_stprintf_s(buffer, _T("musc:%f"), c.muscles[0].cycle_time);
-				//TextOut(hMemDc, 0, 0, buffer, _tcslen(buffer));
+				SelectObject(hMemDc, cyanPen);
+				_stprintf_s(buffer, _T("creatures:%d"), creatures.size());
+				TextOut(hMemDc, 0, 0, buffer, _tcslen(buffer));
+
 				//MoveToEx(hMemDc, n.pos.x, n.pos.y, NULL);
 				//LineTo(hMemDc, n.pos.x + n.debug_vec2.x, n.pos.y + n.debug_vec2.y);
 					
 				SelectObject(hMemDc, hOldPen);
-				DeleteObject(greenPen);
-				DeleteObject(redPen);
-				DeleteObject(bluePen);
-				DeleteObject(cyanPen);
 			}
-			SelectObject(hMemDc, CreateSolidBrush(RGB(255, 0, 0)));
+			SelectObject(hMemDc, solidBrush);
 			Ellipse(hMemDc, c.AverageDistance().x - 5, c.AverageDistance().y - 5, c.AverageDistance().x + 5, c.AverageDistance().y + 5);
 		}
 	}
 
 	BitBlt(hdc, rect.left, rect.top, rect.right, rect.bottom, hMemDc, 0, 0, SRCCOPY);
 
+	DeleteObject(solidBrush);
+	DeleteObject(greenPen);
+	DeleteObject(redPen);
+	DeleteObject(bluePen);
+	DeleteObject(cyanPen);
 	DeleteObject(hBrush);
 	DeleteObject(hBmp);
 	DeleteDC(hMemDc);
@@ -179,12 +181,12 @@ void World::Integrate(double dt)
 		for (Node& n : c.nodes)
 		{
 			n.CollideWithGround(ground, dt);
-
 			//n.CollideFlat(500);
 			n.forces -= n.vel * n.size * n.airFriction;
 			n.acc = n.forces / n.mass;
 			n.vel += n.acc * dt;
 			n.pos += n.vel * dt;
 		}
+		time_running += dt;
 	}
 }

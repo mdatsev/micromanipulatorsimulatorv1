@@ -141,6 +141,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Creature.h" />
     <ClInclude Include="Generation.h" />
     <ClInclude Include="LengthTimePair.h" />

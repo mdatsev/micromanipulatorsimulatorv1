@@ -7,7 +7,7 @@ void Generation::GenerateRandom()
 	for (int i = 0; i < size; i++)
 	{
 		Creature c;
-//		c.CreateRandom;
+		c.CreateRandom();
 		creatures.push_back(c);
 	}
 }
@@ -18,6 +18,7 @@ void Generation::MeasureFitness()
 	{
 		world.AddCreature(c);
 	}
+	world.StartSimulation();
 }
 
 Generation::Generation(int size) : size(size)

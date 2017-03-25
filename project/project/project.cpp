@@ -3,11 +3,13 @@
 
 #include "stdafx.h"
 #include "project.h"
-#include "World.h"
+#include "Generation.h"
+#include "Config.h"
+#include <random>
 #include <time.h>
 
 #define MAX_LOADSTRING 100
-//#define THREAD
+#define THREAD
 // Global Variables:
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
@@ -15,7 +17,8 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 int deltaTime;
 int oldTime;
 
-World world;
+Generation generation = Generation(10);
+
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -113,48 +116,25 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
-
-   int offx = 0;
-   int offy = 0;
-
-   Creature c;
-   Ground* g = new Ground(10, 10);
-   
-   c.AddNode(Node(Vec2(200 + offx, 0 + offy), 25, 0.1, 0.01, 100, true));
-   c.AddNode(Node(Vec2(0 + offx, 300 + offy), 25, 0.3, 0.01, 100, true));
-   c.AddNode(Node(Vec2(400 + offx, 300 + offy), 25, 0.1, 0.01, 100, true));
-
-   Muscle m = Muscle(0, 1, 500, 300);
-   Muscle m2 = Muscle(0, 2, 500, 300);
-   Muscle m3 = Muscle(1, 2, 500, 200);
-   m.length_cycle.push_back(LengthTimePair(1, 2));//lengthM , pairTime, cycle_size
-   m.length_cycle.push_back(LengthTimePair(0.95, 2));
-   m2.length_cycle.push_back(LengthTimePair(1, 2));
-   m3.length_cycle.push_back(LengthTimePair(1, 2));
-   c.AddMuscle(m);
-   c.AddMuscle(m2);
-   c.AddMuscle(m3);
-#if 1
+   Ground* g = new Ground(10,10);
+#if 0
    g->AddPoint(Vec2(-1000 + offx, 500 + offy));
    g->AddPoint(Vec2(2000 + offx, 500 + offy));
 #else
-   g->AddPoint(Vec2(0 + offx, 100 + offy));
-   g->AddPoint(Vec2(300 + offx, 400 + offy));
-   g->AddPoint(Vec2(300 + offx, 350 + offy));
-   g->AddPoint(Vec2(250 + offx, 200 + offy));
-   g->AddPoint(Vec2(600 + offx, 100 + offy));
-   g->AddPoint(Vec2(750 + offx, 300 + offy));
-   g->AddPoint(Vec2(900 + offx, 400 + offy));
-   g->AddPoint(Vec2(1000 + offx, 400 + offy));
+   g->AddPoint(Vec2(0, 200));
+   g->AddPoint(Vec2(300 , 400));
+   g->AddPoint(Vec2(300 , 350));
+   g->AddPoint(Vec2(250 , 200));
+   g->AddPoint(Vec2(600 , 100));
+   g->AddPoint(Vec2(750 , 300));
+   g->AddPoint(Vec2(900 , 400));
+   g->AddPoint(Vec2(1000, 400));
 #endif
-   
-   
-
-   world.AddCreature(c);
-   world.ground = g;
+   generation.world.ground = g;
 #ifdef THREAD
-   world.StartSimulation();
-#endif // THRE
+   generation.GenerateRandom();
+   generation.MeasureFitness();
+#endif
 
    SetTimer(hWnd, 1, 1000/60, NULL);
 
@@ -192,7 +172,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
             case IDM_EXIT:
-				world.StopSimulation();
+				generation.world.StopSimulation();
                 DestroyWindow(hWnd);
                 break;
             default:
@@ -212,9 +192,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				world.Integrate(1/precision/60);
 			}
-			world.Draw(hdc, rc, true);
             EndPaint(hWnd, &ps);
 #endif
+			generation.world.Draw(hdc, rc, true);
         }
         break;
     case WM_DESTROY:

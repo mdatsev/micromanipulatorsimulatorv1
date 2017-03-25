@@ -29,7 +29,6 @@ void Creature::CreateRandom()
 	int overlapDistance = 5;
 	nodes.clear();
 	muscles.clear();
-	std::mt19937 gen(seed);
 	std::uniform_int_distribution<int> distI(min_nodes, max_nodes);
 	std::uniform_real_distribution<double> distD(0, 1);
 
