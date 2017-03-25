@@ -42,8 +42,13 @@ void World::Clear()
 	creatures.clear();
 }
 
-void World::Draw(HDC hdc, RECT rect, bool debug)
+void World::Draw(HDC hdc, RECT rect, double scale, Vec2 center, bool debug)
 {
+	Vec2 top_left_point = Vec2(
+		center.x - (rect.right * scale - rect.left * scale) / 2,
+		center.y - (rect.bottom * scale - rect.top * scale) / 2);
+	double xoff = -top_left_point.x;
+	double yoff = -top_left_point.y;
 	HDC hMemDc = CreateCompatibleDC(hdc);
 	HBITMAP hBmp = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
 	SelectObject(hMemDc, hBmp);
@@ -54,12 +59,13 @@ void World::Draw(HDC hdc, RECT rect, bool debug)
 	HPEN bluePen = CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
 	HPEN cyanPen = CreatePen(PS_SOLID, 1, RGB(0, 255, 255));
 	HBRUSH solidBrush = CreateSolidBrush(RGB(255, 0, 0));
+	HPEN hOldPen = (HPEN)SelectObject(hMemDc, hBrush);
 	for(Creature& c : creatures)
 	{
-		MoveToEx(hMemDc, World::ground->points[0].x, World::ground->points[0].y, NULL); //fixme drawing the same point twice
+		MoveToEx(hMemDc, World::ground->points[0].x * scale + xoff, World::ground->points[0].y * scale + yoff, NULL); //fixme drawing the same point twice
 		for (Vec2& point : World::ground->points)
 		{
-			LineTo(hMemDc, point.x, point.y);
+			LineTo(hMemDc, point.x * scale + xoff, point.y * scale + yoff);
 		}
 
 		for (Node& n : c.nodes)
@@ -71,15 +77,19 @@ void World::Draw(HDC hdc, RECT rect, bool debug)
 			HBRUSH brush = CreateSolidBrush(RGB(color, color, color));
 			SelectObject(hMemDc, brush);
 			DeleteObject(brush);
-			Ellipse(hMemDc, n.pos.x - n.size, n.pos.y - n.size, n.pos.x + n.size, n.pos.y + n.size);
+			Ellipse(hMemDc, 
+				n.pos.x * scale - n.size * scale + xoff, 
+				n.pos.y * scale - n.size * scale + yoff,
+				n.pos.x * scale + n.size * scale + xoff, 
+				n.pos.y * scale + n.size * scale + yoff);
 		}
 
 		for (Muscle& n : c.muscles)
 		{
-			double x1 = c.nodes[n.node1_ID].pos.x;
-			double y1 = c.nodes[n.node1_ID].pos.y;
-			double x2 = c.nodes[n.node2_ID].pos.x;
-			double y2 = c.nodes[n.node2_ID].pos.y;
+			double x1 = c.nodes[n.node1_ID].pos.x * scale + xoff;
+			double y1 = c.nodes[n.node1_ID].pos.y * scale + yoff;
+			double x2 = c.nodes[n.node2_ID].pos.x * scale + xoff;
+			double y2 = c.nodes[n.node2_ID].pos.y * scale + yoff;
 			MoveToEx(hMemDc, x1, y1, NULL);
 			LineTo(hMemDc, x2, y2);
 		}
@@ -89,10 +99,9 @@ void World::Draw(HDC hdc, RECT rect, bool debug)
 	{
 		for (Creature& c : creatures)
 		{
+			/*
 			for (Node& n : c.nodes)
 			{
-
-				HPEN hOldPen = (HPEN)SelectObject(hMemDc, greenPen);
 				//draw velocity			
 				MoveToEx(hMemDc, n.pos.x, n.pos.y, NULL);
 				LineTo(hMemDc, n.pos.x + n.vel.x * 60, n.pos.y + n.vel.y * 60);
@@ -118,16 +127,20 @@ void World::Draw(HDC hdc, RECT rect, bool debug)
 
 				//MoveToEx(hMemDc, n.pos.x, n.pos.y, NULL);
 				//LineTo(hMemDc, n.pos.x + n.debug_vec2.x, n.pos.y + n.debug_vec2.y);
-					
-				SelectObject(hMemDc, hOldPen);
 			}
-			SelectObject(hMemDc, solidBrush);
-			Ellipse(hMemDc, c.AverageDistance().x - 5, c.AverageDistance().y - 5, c.AverageDistance().x + 5, c.AverageDistance().y + 5);
+			*/
+			SelectObject(hMemDc, solidBrush);	
+			Ellipse(hMemDc, 
+				c.AveragePosition().x * scale - 2 + xoff,
+				c.AveragePosition().y * scale - 2 + yoff,
+				c.AveragePosition().x * scale + 2 + xoff,
+				c.AveragePosition().y * scale + 2 + yoff);
 		}
 	}
 
 	BitBlt(hdc, rect.left, rect.top, rect.right, rect.bottom, hMemDc, 0, 0, SRCCOPY);
 
+	SelectObject(hMemDc, hOldPen);
 	DeleteObject(solidBrush);
 	DeleteObject(greenPen);
 	DeleteObject(redPen);
@@ -177,8 +190,8 @@ void World::Integrate(double dt)
 			c.nodes[m.node2_ID].forces += force_direction2 * forceMag;
 #else
 			double forceMag = m.stiffness * displacement;
-			c.nodes[m.node1_ID].forces += force_direction1  * forceMag;
-			c.nodes[m.node2_ID].forces += force_direction2  * forceMag;
+			c.nodes[m.node1_ID].forces += force_direction1 * forceMag;
+			c.nodes[m.node2_ID].forces += force_direction2 * forceMag;
 #endif
 		}
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <random>
-#define seed 24424232
+#define seed 24424236
 static std::mt19937 gen(seed);
 #define gravity_constant  200.1
 #define generation_size 50

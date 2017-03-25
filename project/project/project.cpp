@@ -194,7 +194,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
             EndPaint(hWnd, &ps);
 #endif
-			generation.world.Draw(hdc, rc, false);
+			int fastest = 0;
+			for (int i = 1; i < generation.world.creatures.size(); i++)
+			{
+				if (generation.world.creatures[i].AveragePosition().x > generation.world.creatures[fastest].AveragePosition().x)
+				{
+					fastest = i;
+				}
+			}
+			generation.world.Draw(hdc, rc, 1, generation.world.creatures.size() ? generation.world.creatures[fastest].AveragePosition() : Vec2(0,0), true);
         }
         break;
     case WM_DESTROY:
