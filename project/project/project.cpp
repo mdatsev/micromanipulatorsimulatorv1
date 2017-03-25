@@ -17,7 +17,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 int deltaTime;
 int oldTime;
 
-Generation generation = Generation(10);
+Generation generation = Generation(generation_size);
 
 
 // Forward declarations of functions included in this code module:
@@ -117,9 +117,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
    Ground* g = new Ground(10,10);
-#if 0
-   g->AddPoint(Vec2(-1000 + offx, 500 + offy));
-   g->AddPoint(Vec2(2000 + offx, 500 + offy));
+#if 1
+   g->AddPoint(Vec2(-1000, 300));
+   g->AddPoint(Vec2(2000, 300));
 #else
    g->AddPoint(Vec2(0, 200));
    g->AddPoint(Vec2(300 , 400));
@@ -136,7 +136,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    generation.MeasureFitness();
 #endif
 
-   SetTimer(hWnd, 1, 1000/60, NULL);
+   SetTimer(hWnd, 1, 1000, NULL);
 
    return TRUE;
 }
@@ -194,7 +194,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
             EndPaint(hWnd, &ps);
 #endif
-			generation.world.Draw(hdc, rc, true);
+			generation.world.Draw(hdc, rc, false);
         }
         break;
     case WM_DESTROY:

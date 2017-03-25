@@ -2,6 +2,7 @@
 #include "World.h"
 #include <process.h>
 #include "constants.h"
+#include "Config.h"
 
 World::World()
 {
@@ -18,7 +19,7 @@ void Simulate(void* param)
 	world->simulation_running = true;
 	while (world->simulation_running)
 	{
-		world->Integrate(world->delta_time);
+		world->Integrate(delta_time);
 	}
 }
 
@@ -68,7 +69,9 @@ void World::Draw(HDC hdc, RECT rect, bool debug)
 			if (color > 255)
 				color = 255;
 			color = 255 - color;
-			SelectObject(hMemDc, CreateSolidBrush(RGB(color, color, color)));
+			HBRUSH brush = CreateSolidBrush(RGB(color, color, color));
+			SelectObject(hMemDc, brush);
+			DeleteObject(brush);
 			Ellipse(hMemDc, n.pos.x - n.size, n.pos.y - n.size, n.pos.x + n.size, n.pos.y + n.size);
 		}
 
@@ -153,17 +156,20 @@ void World::Integrate(double dt)
 			force_direction2.Normalize();
 			double length = c.nodes[m.node1_ID].pos.Distance(c.nodes[m.node2_ID].pos);
 			double displacement = length - m.target_length();
-			if (m.cycle_time > m.length_cycle[m.cycle_stage].time)
+			if (m.length_cycle.size())
 			{
-				if (m.cycle_stage >= m.length_cycle.size() - 1)
+				if (m.cycle_time > m.length_cycle[m.cycle_stage].time)
 				{
-					m.cycle_stage = 0;
+					if (m.cycle_stage >= m.length_cycle.size() - 1)
+					{
+						m.cycle_stage = 0;
+					}
+					else
+					{
+						m.cycle_stage++;
+					}
+					m.cycle_time = 0;
 				}
-				else
-				{
-					m.cycle_stage++;
-				}
-				m.cycle_time = 0;
 			}
 			m.cycle_time += dt;
 #if 0

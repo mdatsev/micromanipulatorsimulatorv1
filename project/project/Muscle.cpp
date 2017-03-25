@@ -14,5 +14,5 @@ Muscle::~Muscle()
 
 double Muscle::target_length()
 {
-	return rest_target_length * length_cycle[cycle_stage].length;
+	return length_cycle.size() ? rest_target_length * length_cycle[cycle_stage].length : rest_target_length;
 }

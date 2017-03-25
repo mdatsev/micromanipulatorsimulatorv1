@@ -74,7 +74,7 @@ void Creature::CreateRandom()
 	for (int j = 0; j < number_of_muscles; j++)
 	{
 		bool isValid = true;
-		distI = std::uniform_int_distribution<int>(0, number_of_nodes);
+		distI = std::uniform_int_distribution<int>(0, number_of_nodes - 1);
 		nodeId1 = distI(gen);
 		nodeId2 = distI(gen);
 		if (nodeId1 == nodeId2)
@@ -110,8 +110,8 @@ void Creature::CreateRandom()
 		}
 		if (!isValid) 
 		{
-			RemoveNode(i);
-			i--;
+			//RemoveNode(i);
+			//i--;
 		}	
 	}
 	
