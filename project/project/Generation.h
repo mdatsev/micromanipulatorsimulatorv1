@@ -8,7 +8,8 @@ public:
 	std::vector<Creature> creatures;
 	World world;
 	void GenerateRandom();
-	void MeasureFitness();
+	void Simulate(int time);
+	void MeasureDistances();
 	void KillAndBreed();
 	Generation(int size);
 	~Generation();

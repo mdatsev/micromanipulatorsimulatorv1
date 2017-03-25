@@ -25,8 +25,12 @@ void Simulate(void* param)
 	World* world = params->world;
 	double time = params->time;
 	world->simulation_running = true;
-	while (world->simulation_running && world->time_running < time)
+	while (world->simulation_running)
 	{
+		if (world->time_running > time)
+		{
+			world->simulation_running = false;
+		}
 		world->Integrate(delta_time);
 	}
 }
