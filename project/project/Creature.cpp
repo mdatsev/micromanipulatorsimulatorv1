@@ -251,17 +251,17 @@ void Creature::Mutate()
 		chance = distD(gen);
 		if (chance < mutation_chance)
 		{
-			//double stiffness_deviation = muscles[i].stiffness / max_deviation;
-			//distD = std::uniform_real_distribution<double>(muscles[i].stiffness - stiffness_deviation, muscles[i].stiffness + stiffness_deviation);
-			//muscles[i].stiffness = distD(gen);
+			double stiffness_deviation = muscles[i].stiffness / max_deviation;
+			distD = std::uniform_real_distribution<double>(muscles[i].stiffness - stiffness_deviation, muscles[i].stiffness + stiffness_deviation);
+			muscles[i].stiffness = distD(gen);
 		}
 		distD = std::uniform_real_distribution<double>(0, 1);
 		chance = distD(gen);
 		if (chance < mutation_chance)
 		{
-			//double targetL_deviation = muscles[i].rest_target_length/ max_deviation;
-			//distD = std::uniform_real_distribution<double>(muscles[i].rest_target_length - targetL_deviation, muscles[i].rest_target_length + targetL_deviation);
-			//muscles[i].rest_target_length = distD(gen);
+			double targetL_deviation = muscles[i].rest_target_length/ max_deviation;
+			distD = std::uniform_real_distribution<double>(muscles[i].rest_target_length - targetL_deviation, muscles[i].rest_target_length + targetL_deviation);
+			muscles[i].rest_target_length = distD(gen);
 		}
 	}
 }
