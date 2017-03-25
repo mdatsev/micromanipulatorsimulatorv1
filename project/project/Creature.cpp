@@ -95,9 +95,10 @@ void Creature::CreateRandom()
 		stiffness = distD(gen);
 		distD = std::uniform_real_distribution<double>(min_targetL, max_targetL);
 		target_length = distD(gen);
-		Muscle m = Muscle(nodeId1, nodeId2, stiffness, target_length);
+		AddMuscle(Muscle(nodeId1, nodeId2, stiffness, target_length));
+
 	}
-	for (int i = 0; i < number_of_nodes; i++)
+	for (int i = 0; i < nodes.size(); i++)
 	{
 		bool isValid = false;
 		for (Muscle& m : muscles)
@@ -107,7 +108,11 @@ void Creature::CreateRandom()
 				isValid = true;
 			}
 		}
-		if (!isValid) RemoveNode(i);
+		if (!isValid) 
+		{
+			RemoveNode(i);
+			i--;
+		}	
 	}
 	
 }
