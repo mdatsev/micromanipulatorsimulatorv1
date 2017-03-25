@@ -133,15 +133,64 @@ void Creature::CreateRandom()
 
 void Creature::Mutate()
 {
-	std::uniform_int_distribution<int> distI(min_nodes, max_nodes);
-	std::uniform_real_distribution<double> distD(0, 1);
-	double chance = distD(gen);
-	if (chance < mutation_chance)
-	{
-		int number_of_nodes = distI(gen);
-		for (int i = 0; i < number_of_nodes; i++)
-		{
 
+	std::uniform_int_distribution<int> distI(min_nodes, max_nodes);
+	int number_of_nodes = distI(gen);
+	for (int i = 0; i < number_of_nodes; i++)
+	{
+		std::uniform_real_distribution<double> distD(0, 1);
+		double chance = distD(gen);
+		if (chance < mutation_chance)
+		{
+			double size_deviation = nodes[i].size / max_deviation;
+			distD = std::uniform_real_distribution<double>(nodes[i].size - size_deviation, nodes[i].size + size_deviation);
+			nodes[i].size = distD(gen);
+			
+		}
+		distD = std::uniform_real_distribution<double>(0, 1);
+		chance = distD(gen);
+		if (chance < mutation_chance)
+		{
+			double friction_deviation = nodes[i].friction / max_deviation;
+			distD = std::uniform_real_distribution<double>(nodes[i].friction - friction_deviation, nodes[i].friction + friction_deviation);
+			nodes[i].friction = distD(gen);
+		}
+		distD = std::uniform_real_distribution<double>(0, 1);
+		chance = distD(gen);
+		if (chance < mutation_chance)
+		{
+			double restitution_deviation = nodes[i].restitution / max_deviation;
+			distD = std::uniform_real_distribution<double>(nodes[i].restitution - restitution_deviation, nodes[i].restitution + restitution_deviation);
+			nodes[i].restitution = distD(gen);
+		}
+		distD = std::uniform_real_distribution<double>(0, 1);
+		chance = distD(gen);
+		if (chance < mutation_chance)
+		{
+			double mass_deviation = nodes[i].mass / max_deviation;
+			distD = std::uniform_real_distribution<double>(nodes[i].mass - mass_deviation, nodes[i].mass + mass_deviation);
+			nodes[i].mass = distD(gen);
+		}
+	}
+	distI = std::uniform_int_distribution<int>(min_nodes, max_nodes);
+	int number_of_muscles = distI(gen);
+	for (int i = 0; i < number_of_muscles; i++)
+	{
+		std::uniform_real_distribution<double> distD(0, 1);
+		double chance = distD(gen);
+		if (chance < mutation_chance)
+		{
+			double stiffness_deviation = muscles[i].stiffness / max_deviation;
+			distD = std::uniform_real_distribution<double>(muscles[i].stiffness - stiffness_deviation, muscles[i].stiffness + stiffness_deviation);
+			muscles[i].stiffness = distD(gen);
+		}
+		distD = std::uniform_real_distribution<double>(0, 1);
+		chance = distD(gen);
+		if (chance < mutation_chance)
+		{
+			double targetL_deviation = muscles[i].target_length / max_deviation;
+			distD = std::uniform_real_distribution<double>(muscles[i].target_length - targetL_deviation, muscles[i].target_length + targetL_deviation);
+			muscles[i].target_length = distD(gen);
 		}
 	}
 }

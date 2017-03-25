@@ -32,4 +32,5 @@ static std::mt19937 gen(seed);
 //mutation parameters
 #define mutation_chance 0.01
 #define large_mutation_chance 0.005
+#define max_deviation 2
 
