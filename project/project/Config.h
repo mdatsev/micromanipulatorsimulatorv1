@@ -6,6 +6,7 @@ static std::mt19937 gen(seed);
 #define air_friction 0.4
 #define generation_size 100
 #define delta_time 0.001
+#define one_generation_time 1
 //generator parameters
 #define max_dimension 200
 #define min_nodes 2

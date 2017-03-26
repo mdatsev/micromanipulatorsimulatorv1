@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Generation.h"
 #include <random>
+#include <process.h>
+#include "Config.h"
 
 
 void Generation::GenerateRandom()
@@ -15,19 +17,35 @@ void Generation::GenerateRandom()
 			continue;
 		}
 		//c.Mutate();
-		creatures.push_back(c);
+		world.creatures.push_back(c);
 	}
 }
 
-void Generation::Simulate(int time)
+void SimulateGen(void* param)
 {
-	for (Creature& c : creatures)
+	Generation* gen = (Generation*)param;
+	gen->generation_running = true;
+	while (gen->generation_running)
 	{
-		c.fitness = c.AveragePosition().x;
-		world.AddCreature(c);
-
+		//if (generations_num)
+		//{
+		//	gen->simulation_running = false;
+		//}
+		gen->world.time_running = 0;
+		HANDLE hThread = gen->world.StartSimulation(one_generation_time);
+		WaitForSingleObject(hThread, INFINITE);
+		gen->MeasureDistances();
 	}
-	HANDLE hThread = world.StartSimulation(time);
+}
+
+void Generation::DoGenerations()
+{
+	_beginthread(SimulateGen, 0, (void *)this);
+}
+
+void Generation::Stop()
+{
+	generation_running = false;
 }
 
 void Generation::MeasureDistances()

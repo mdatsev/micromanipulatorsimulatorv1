@@ -131,7 +131,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    generation.world.ground = g;
 #ifdef THREAD
    generation.GenerateRandom();
-   generation.Simulate(20);
+   generation.DoGenerations();
 #endif
 
    SetTimer(hWnd, 1, 1000/60, NULL);
@@ -158,10 +158,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			RECT rc;
 			GetClientRect(hWnd, &rc);
 			InvalidateRect(hWnd, &rc, FALSE);
-			if (!generation.world.simulation_running)
-			{
-				generation.KillAndBreed();
-			}
 		}
 		break;
     case WM_COMMAND:
