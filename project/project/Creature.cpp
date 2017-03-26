@@ -272,7 +272,7 @@ void Creature::Mutate()
 		}
 	}
 	
-	if (muscles.size() < 1)
+	if (muscles.size() < 1 || nodes.size() < 3)
 	{
 		*this = original;
 	}
