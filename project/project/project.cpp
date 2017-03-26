@@ -204,7 +204,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			generation->world.Draw(hdc, rc, 1,
 				generation->world.creatures.size() ?
 				generation->world.creatures[fastest].AveragePosition() :
-				Vec2(0,0), true);
+				Vec2(0,0), false);
 			EndPaint(hWnd, &ps);
         }
         break;
