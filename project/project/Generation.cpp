@@ -2,8 +2,8 @@
 #include "Generation.h"
 #include <random>
 #include <algorithm>
-#include <process.h>
 #include "Config.h"
+#include <process.h>
 
 
 void Generation::GenerateRandom()
