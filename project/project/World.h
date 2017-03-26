@@ -6,7 +6,7 @@
 class World
 {
 public:
-	int generation_number;
+	int generation_number = 0;
 	std::vector<Creature> creatures;
 	double time_running = 0;
 	bool simulation_running;
