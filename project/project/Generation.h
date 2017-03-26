@@ -13,6 +13,7 @@ public:
 	void Stop();
 	void MeasureDistances();
 	void KillAndBreed();
+	void RemoveCreature(int index);
 	Generation(int size);
 	~Generation();
 };
