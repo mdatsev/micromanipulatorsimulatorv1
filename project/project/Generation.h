@@ -11,6 +11,7 @@ public:
 	void Simulate(int time);
 	void MeasureDistances();
 	void KillAndBreed();
+	void RemoveCreature(int index);
 	Generation(int size);
 	~Generation();
 };
