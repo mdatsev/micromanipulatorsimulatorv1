@@ -2,6 +2,9 @@
 #include "World.h"
 #include <process.h>
 #include "Config.h"
+#include <mutex>
+
+static std::mutex coutMutex;
 
 World::World()
 {
@@ -80,12 +83,12 @@ void World::Draw(HDC hdc, RECT rect, double scale, Vec2 center, bool debug)
 	HPEN hOldPen = (HPEN)SelectObject(hMemDc, hBrush);
 
 	TCHAR buffer[80];
+
+	g_num_mutex.lock();
 	SetTextColor(hMemDc, RGB(0, 0, 255));
 	SetBkMode(hMemDc, TRANSPARENT);
-	_stprintf_s(buffer, _T("time:%f"), time_running);
+	_stprintf_s(buffer, _T("gen:%d"), generation_number);
 	TextOut(hMemDc, 0, 0, buffer, _tcslen(buffer));
-
-
 	for(Creature& c : creatures)
 	{
 		MoveToEx(hMemDc, World::ground->points[0].x * scale + xoff, World::ground->points[0].y * scale + yoff, NULL); //fixme drawing the same point twice
@@ -120,7 +123,6 @@ void World::Draw(HDC hdc, RECT rect, double scale, Vec2 center, bool debug)
 			LineTo(hMemDc, x2, y2);
 		}
 	}
-
 	if (debug)
 	{
 		for (Creature& c : creatures)
@@ -163,7 +165,7 @@ void World::Draw(HDC hdc, RECT rect, double scale, Vec2 center, bool debug)
 				c.AveragePosition().y * scale + 2 + yoff);
 		}
 	}
-
+	g_num_mutex.unlock();
 	BitBlt(hdc, rect.left, rect.top, rect.right, rect.bottom, hMemDc, 0, 0, SRCCOPY);
 
 	SelectObject(hMemDc, hOldPen);

@@ -4,8 +4,8 @@
 #include <algorithm>
 #include "Config.h"
 #include <process.h>
-
-
+#include <mutex>
+	
 void Generation::GenerateRandom()
 {
 	for (int i = 0; i < size; i++)
@@ -36,6 +36,8 @@ void SimulateGen(void* param)
 		HANDLE hThread = gen->world.StartSimulation(one_generation_time);
 		WaitForSingleObject(hThread, INFINITE);
 		gen->MeasureDistances();
+		gen->KillAndBreed();
+		gen->world.generation_number++;
 	}
 }
 
@@ -51,7 +53,7 @@ void Generation::Stop()
 
 void Generation::MeasureDistances()
 {
-	for (Creature& c : creatures)
+	for (Creature& c : world.creatures)
 	{
 		c.fitness = c.AveragePosition().x - c.fitness;
 	}
@@ -59,31 +61,39 @@ void Generation::MeasureDistances()
 
 void Generation::KillAndBreed()
 {	
-	std::sort(creatures.begin(), creatures.end(), [](const Creature& lhs, const Creature& rhs) { return lhs.fitness < rhs.fitness; });
+	world.g_num_mutex.lock();
+
+	std::sort(world.creatures.begin(), world.creatures.end(), [](const Creature& lhs, const Creature& rhs) { return lhs.fitness > rhs.fitness; });
 	std::uniform_int_distribution<int> distI(0, 1);
+	/*
 	int i = 0;
-	for (Creature& c : creatures)
+	int j = 0;
+	while (i <= world.creatures.size() / 2)
 	{
 		distI = std::uniform_int_distribution<int>(1, generation_size - 1);
 		int chance = distI(gen);
-		if (i < chance)
+		if (j < chance)
 		{
-			RemoveCreature(i);
+			RemoveCreature(j);
+			i++;
 		}
+		j++;
 	}
-	for (Creature& c : creatures)
-	{
-		world.creatures.push_back(c);
-	}
-	for (Creature& c : creatures)
+	*/
+	world.creatures.erase(world.creatures.begin() + generation_size / 2, world.creatures.end());
+	auto old_count = world.creatures.size();
+	world.creatures.resize(2 * old_count);
+	std::copy_n(world.creatures.begin(), old_count, world.creatures.begin() + old_count);
+	for (Creature& c : world.creatures)
 	{
 		c.Mutate();
 	}
+	world.g_num_mutex.unlock();
 }
 
 void Generation::RemoveCreature(int index)
 {
-	creatures.erase(creatures.begin() + index);
+	world.creatures.erase(world.creatures.begin() + index);
 }
 
 Generation::Generation(int size) : size(size)

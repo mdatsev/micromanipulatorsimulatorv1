@@ -15,7 +15,7 @@ HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
-Generation generation = Generation(generation_size);
+Generation *generation = new Generation(generation_size);
 
 
 // Forward declarations of functions included in this code module:
@@ -128,10 +128,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    g->AddPoint(Vec2(900 , 400));
    g->AddPoint(Vec2(1000, 400));
 #endif
-   generation.world.ground = g;
+   generation->world.ground = g;
 #ifdef THREAD
-   generation.GenerateRandom();
-   generation.DoGenerations();
+   generation->GenerateRandom();
+   generation->DoGenerations();
 #endif
 
    SetTimer(hWnd, 1, 1000/60, NULL);
@@ -170,7 +170,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
             case IDM_EXIT:
-				generation.world.StopSimulation();
+				generation->world.StopSimulation();
                 DestroyWindow(hWnd);
                 break;
             default:
@@ -192,16 +192,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 #endif
 			int fastest = 0;
-			for (int i = 1; i < generation.world.creatures.size(); i++)
+			generation->world.g_num_mutex.lock();
+			for (int i = 1; i < generation->world.creatures.size(); i++)
 			{
-				if (generation.world.creatures[i].AveragePosition().x > generation.world.creatures[fastest].AveragePosition().x)
+				if (generation->world.creatures[i].AveragePosition().x > generation->world.creatures[fastest].AveragePosition().x)
 				{
 					fastest = i;
 				}
 			}
-			generation.world.Draw(hdc, rc, 1,
-				generation.world.creatures.size() ?
-				generation.world.creatures[fastest].AveragePosition() :
+			generation->world.g_num_mutex.unlock();
+			generation->world.Draw(hdc, rc, 1,
+				generation->world.creatures.size() ?
+				generation->world.creatures[fastest].AveragePosition() :
 				Vec2(0,0), true);
 			EndPaint(hWnd, &ps);
         }

@@ -5,8 +5,8 @@ class Generation
 {
 public:
 	int size;
+	int number;
 	bool generation_running;
-	std::vector<Creature> creatures;
 	World world;
 	void GenerateRandom();
 	void DoGenerations();
